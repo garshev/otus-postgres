@@ -187,6 +187,5 @@
     
     Теперь нет прав на схему public через роль public.
     
- # Project OTUS-Postgres
- # Instance homework-5
+
  
