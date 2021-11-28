@@ -7,7 +7,7 @@ instance homework-12-clickhouse
 
 Импортируем через COPY 36 csv файлов на 10 ГБ
 
-# set shared_buffers = 11 GB # all table in buffers
+set shared_buffers = 11 GB # all table in buffers
 
     taxi=# SELECT payment_type, round(sum(tips)/sum(trip_total)*100, 0) + 0 as tips_percent, count(*) as c
     from taxi_trips
@@ -29,12 +29,12 @@ instance homework-12-clickhouse
 
     Time: 12450.248 ms (00:12.450)
 
-# результат - 12 секунд
+результат - 12 секунд
 
-# Создаём колоночную базу clickhouse и импортируем теже данные
+Создаём колоночную базу clickhouse и импортируем теже данные
 for F in taxi_0000000000{00..36}*; do echo "Proccessing $F .."; awk FNR-1 $F | clickhouse-client --query="INSERT INTO taxi.taxi_trips_ram FORMAT CSV"; done
-# homework-12-clickhouse.us-central1-c.c.mimetic-math-328316.internal :) 
-# engine = MergeTree()
+homework-12-clickhouse.us-central1-c.c.mimetic-math-328316.internal :) 
+engine = MergeTree()
 
 SELECT payment_type, round(sum(tips)/sum(trip_total)*100, 0) + 0 as tips_percent, count(*) as c FROM taxi.taxi_trips  group by payment_type order by 3;
 
@@ -60,9 +60,9 @@ ORDER BY 3 ASC
 └──────────────┴──────────────┴──────────┘
 
 10 rows in set. Elapsed: 0.600 sec. Processed 24.73 million rows, 592.58 MB (41.23 million rows/s., 988.17 MB/s.)
-# И на премушествах колоночной базы для OLAP запроса получим выиигрыш в 20 раз - 0.6 секунды против 12 в Постгрес.
+И на премушествах колоночной базы для OLAP запроса получим выиигрыш в 20 раз - 0.6 секунды против 12 в Постгрес.
 
-# Создадим таблицу в памяти - Engine = Memory :
+Создадим таблицу в памяти - Engine = Memory :
     create table taxi.taxi_trips 
     (
         unique_key text, \
@@ -115,4 +115,4 @@ ORDER BY 3 ASC
 
     10 rows in set. Elapsed: 0.282 sec. Processed 24.05 million rows, 576.25 MB (85.20 million rows/s., 2.04 GB/s.)
 
-# Ускорение в два раза - 0.282 sec. 
+Ускорение в два раза - 0.282 sec. 
