@@ -30,7 +30,28 @@
         
     Реализовать индекс для полнотекстового поиска
     
-        
+        create table ts(doc text, doc_tsv tsvector);
+        copy ts(doc) from '/home/slava/puh.txt'; -- Бесы Пушкина
+        set default_text_search_config = russian;
+        update ts set doc_tsv = to_tsvector(doc); -- Создаём лексемы
+        create index on ts using gin(doc_tsv);
+        select doc from ts where doc_tsv @@ to_tsquery('туч');
+                        doc            
+            ---------------------------
+             Мчатся тучи, вьются тучи;
+             Мчатся тучи, вьются тучи,
+             Мчатся тучи, вьются тучи;
+            (3 rows)
+            
+         explain (costs off)  select doc from ts where doc_tsv @@ to_tsquery('туч');
+                        QUERY PLAN                        
+            ----------------------------------------------------------
+             Bitmap Heap Scan on ts
+               Recheck Cond: (doc_tsv @@ to_tsquery('туч'::text))
+               ->  Bitmap Index Scan on ts_doc_tsv_idx
+                     Index Cond: (doc_tsv @@ to_tsquery('туч'::text))
+            (4 rows)
+
     
     Реализовать индекс на часть таблицы или индекс на поле с функцией
     
@@ -73,6 +94,9 @@
     Необходимо:
 
     Реализовать прямое соединение двух или более таблиц
+    
+        
+    
     Реализовать левостороннее (или правостороннее) соединение двух или более таблиц
     Реализовать кросс соединение двух или более таблиц
     Реализовать полное соединение двух или более таблиц
