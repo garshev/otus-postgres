@@ -95,12 +95,75 @@
 
     Реализовать прямое соединение двух или более таблиц
     
-        
     
+        create table a(id serial, fname text);
+        create table b(id serial, lname text);
+        create table kinders(b_id int, fname text);
+        insert into a(fname) values ('Ivan'), ('Valera'), ('Nina'), ('Lera');
+        insert into b(lname) values ('Petrov'), ('Ivanov'), ('Popova');
+        insert into kinders(b_id, fname) values (1, 'Peter'), (2, 'Nikolay'), (3, 'Sveta'), (3, 'Dasha');
+        
+        select * from a join b on a.id = b.id;   -- выводит совпадающие по ключам строки обоих таблиц
+         id | fname  | id | lname
+        ----+--------+----+--------
+          1 | Ivan   |  1 | Petrov
+          2 | Valera |  2 | Ivanov
+          3 | Nina   |  3 | Popova
+        (3 rows)
+        
     Реализовать левостороннее (или правостороннее) соединение двух или более таблиц
+    
+         select * from a left join b on a.id = b.id;  -- выводит все строки левой таблицы и все и совпадающие по ключам строки правой таблицы
+         id | fname  | id | lname
+        ----+--------+----+--------
+          1 | Ivan   |  1 | Petrov
+          2 | Valera |  2 | Ivanov
+          3 | Nina   |  3 | Popova
+          4 | Lera   |    |
+        (4 rows)
+    
     Реализовать кросс соединение двух или более таблиц
+    
+        select * from a cross join b;       -- перемножение строк
+         id | fname  | id | lname
+        ----+--------+----+--------
+          1 | Ivan   |  1 | Petrov
+          1 | Ivan   |  2 | Ivanov
+          1 | Ivan   |  3 | Popova
+          2 | Valera |  1 | Petrov
+          2 | Valera |  2 | Ivanov
+          2 | Valera |  3 | Popova
+          3 | Nina   |  1 | Petrov
+          3 | Nina   |  2 | Ivanov
+          3 | Nina   |  3 | Popova
+          4 | Lera   |  1 | Petrov
+          4 | Lera   |  2 | Ivanov
+          4 | Lera   |  3 | Popova
+        (12 rows)
+    
     Реализовать полное соединение двух или более таблиц
+    
+        select * from a full join b on a.id = b.id;  -- Строки обеих таблиц в результате
+         id | fname  | id | lname
+        ----+--------+----+--------
+          1 | Ivan   |  1 | Petrov
+          2 | Valera |  2 | Ivanov
+          3 | Nina   |  3 | Popova
+          4 | Lera   |    |
+        (4 rows)
+    
     Реализовать запрос, в котором будут использованы разные типы соединений
+    
+        select * from a full join b on a.id = b.id left join kinders on b.id = kinders.b_id;  -- К полному соединение таблиц a и b добавляем строки таблицы kinders
+         id | fname  | id | lname  | b_id |  fname
+        ----+--------+----+--------+------+---------
+          1 | Ivan   |  1 | Petrov |    1 | Peter
+          2 | Valera |  2 | Ivanov |    2 | Nikolay
+          3 | Nina   |  3 | Popova |    3 | Sveta
+          3 | Nina   |  3 | Popova |    3 | Dasha
+          4 | Lera   |    |        |      |
+        (5 rows)
+    
     Сделать комментарии на каждый запрос
     К работе приложить структуру таблиц, для которых выполнялись соединения
 
